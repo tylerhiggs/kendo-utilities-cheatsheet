@@ -142,8 +142,9 @@ export default function KendoCheatsheet({
     <>
       <div className="my-2 grid w-full grid-cols-1 p-4 sm:grid-cols-3">
         <div className="flex items-center justify-start">
-          <h1 className="text-md font-bold">
+          <h1 className="text-base font-bold">
             <a
+              tabIndex={0}
               className="font-semibold text-fuchsia-400 hover:underline"
               href="https://www.telerik.com/design-system/docs/utils/get-started/introduction/"
               target="_blank"
@@ -172,6 +173,7 @@ export default function KendoCheatsheet({
           <Tooltip>
             <TooltipTrigger asChild>
               <a
+                tabIndex={0}
                 href="https://github.com/tylerhiggs/kendo-utilities-cheatsheet"
                 target="_blank"
                 rel="noopener noreferrer"

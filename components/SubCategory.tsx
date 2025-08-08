@@ -24,12 +24,13 @@ export default function SubCategory({
     <Collapsible key={title} open={open} onOpenChange={setOpen}>
       <div>
         <CollapsibleTrigger asChild>
-          <div className="flex cursor-pointer items-center justify-between p-1">
-            <h3 className="text-md font-medium">
-              {title.replace(".scss", "")}
-            </h3>
+          <Button
+            variant="ghost"
+            className="flex w-full cursor-pointer items-center justify-between p-1 text-base"
+          >
+            <h3 className="font-medium">{title.replace(".scss", "")}</h3>
             <ChevronsUpDown className="h-5 w-5 text-gray-500" />
-          </div>
+          </Button>
         </CollapsibleTrigger>
         <CollapsibleContent className="flex flex-col gap-3">
           {items.map((item) => (

@@ -31,6 +31,7 @@ export default function Home() {
         <div className="flex gap-1">
           Made with ❤️ by Tyler Higgs |
           <a
+            tabIndex={0}
             className="text-fuchsia-400 hover:underline"
             target="_blank"
             rel="noopener noreferrer"
@@ -41,6 +42,7 @@ export default function Home() {
         </div>
         <br />
         <a
+          tabIndex={0}
           href="https://github.com/tylerhiggs/kendo-utilities-cheatsheet"
           target="_blank"
           rel="noopener noreferrer"
