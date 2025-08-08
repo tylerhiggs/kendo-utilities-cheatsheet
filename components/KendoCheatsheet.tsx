@@ -16,17 +16,8 @@ export default function KendoCheatsheet({
     subGroup: string;
   })[];
 }) {
-  const [filteredItems, setFilteredItems] = useState<
-    {
-      title: string;
-      items: {
-        title: string;
-        items: CssItem[];
-      }[];
-    }[]
-  >([]);
-
   const [query, setQuery] = useState("");
+  const [screenSize, setScreenSize] = useState<"sm" | "md" | "lg" | "xl">("xl");
   const inputRef = useRef<HTMLInputElement>(null);
 
   const fuse = useMemo(
@@ -56,38 +47,96 @@ export default function KendoCheatsheet({
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  // Screen size detection
   useEffect(() => {
-    const results = query
-      ? fuse.search(query)
-      : flattenedItems.map((item) => ({ item }));
-    setFilteredItems(
-      results.reduce(
-        (acc, { item }) => {
-          const group = acc.find((g) => g.title === item.group);
-          if (group) {
-            const subGroup = group.items.find(
-              (sg) => sg.title === item.subGroup,
-            );
-            if (subGroup) {
-              subGroup.items.push(item);
-            } else {
-              group.items.push({ title: item.subGroup, items: [item] });
-            }
-          } else {
-            acc.push({
-              title: item.group,
-              items: [{ title: item.subGroup, items: [item] }],
-            });
-          }
-          return acc;
-        },
-        [] as {
-          title: string;
-          items: { title: string; items: CssItem[] }[];
-        }[],
-      ),
-    );
-  }, [query, flattenedItems, fuse]);
+    const updateScreenSize = () => {
+      const width = window.innerWidth;
+      if (width >= 1280) setScreenSize("xl");
+      else if (width >= 1024) setScreenSize("lg");
+      else if (width >= 768) setScreenSize("md");
+      else setScreenSize("sm");
+    };
+
+    updateScreenSize();
+    window.addEventListener("resize", updateScreenSize);
+    return () => window.removeEventListener("resize", updateScreenSize);
+  }, []);
+
+  const filteredItems = (
+    query ? fuse.search(query) : flattenedItems.map((item) => ({ item }))
+  ).reduce(
+    (acc, { item }) => {
+      const group = acc.find((g) => g.title === item.group);
+      if (group) {
+        const subGroup = group.items.find((sg) => sg.title === item.subGroup);
+        if (subGroup) {
+          subGroup.items.push(item);
+        } else {
+          group.items.push({ title: item.subGroup, items: [item] });
+        }
+      } else {
+        acc.push({
+          title: item.group,
+          items: [{ title: item.subGroup, items: [item] }],
+        });
+      }
+      return acc;
+    },
+    [] as {
+      title: string;
+      items: { title: string; items: CssItem[] }[];
+    }[],
+  );
+
+  // Column distribution logic
+  const columns = useMemo(() => {
+    const columnCount =
+      screenSize === "sm"
+        ? 1
+        : screenSize === "md"
+          ? 2
+          : screenSize === "lg"
+            ? 3
+            : 4;
+
+    // Initialize columns with empty arrays and weight counters
+    const cols: Array<{
+      items: typeof filteredItems;
+      weight: number;
+    }> = Array.from({ length: columnCount }, () => ({ items: [], weight: 0 }));
+
+    // Sort items by weight (descending) for better distribution
+    const sortedItems = [...filteredItems].sort((a, b) => {
+      const weightA = a.items.reduce(
+        (sum, subGroup) => sum + subGroup.items.length,
+        0,
+      );
+      const weightB = b.items.reduce(
+        (sum, subGroup) => sum + subGroup.items.length,
+        0,
+      );
+      return weightB - weightA;
+    });
+
+    // Distribute items to the column with the least weight
+    sortedItems.forEach((item) => {
+      const itemWeight = item.items.reduce(
+        (sum, subGroup) => sum + subGroup.items.length,
+        0,
+      );
+
+      // Find the column with the minimum weight
+      const minWeightColumn = cols.reduce(
+        (min, col, index) => (col.weight < cols[min].weight ? index : min),
+        0,
+      );
+
+      cols[minWeightColumn].items.push(item);
+      cols[minWeightColumn].weight += itemWeight;
+    });
+
+    return cols.map((col) => col.items);
+  }, [filteredItems, screenSize]);
 
   return (
     <>
@@ -141,12 +190,18 @@ export default function KendoCheatsheet({
           </Tooltip>
         </div>
       </div>
-      <div className="flex w-full">
-        <div className="w-full columns-1 flex-col gap-4 p-4 sm:columns-2 md:columns-3 lg:columns-4">
-          {filteredItems.map((item) => (
-            <Category key={item.title} title={item.title} items={item.items} />
-          ))}
-        </div>
+      <div className="flex w-full gap-4 p-4">
+        {columns.map((columnItems, columnIndex) => (
+          <div key={columnIndex} className="flex flex-1 flex-col gap-4">
+            {columnItems.map((item) => (
+              <Category
+                key={item.title}
+                title={item.title}
+                items={item.items}
+              />
+            ))}
+          </div>
+        ))}
       </div>
     </>
   );

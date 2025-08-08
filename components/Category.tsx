@@ -19,7 +19,7 @@ export default function Category({
 }) {
   const [open, setOpen] = useState(true);
   return (
-    <div className="flex w-full break-inside-avoid py-3">
+    <div className="flex w-full break-inside-avoid">
       <Collapsible
         open={open}
         onOpenChange={setOpen}
