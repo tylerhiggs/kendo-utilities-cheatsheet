@@ -6,23 +6,46 @@ import type { CssItem, GroupedSubCategories } from "./types";
 const getAllScssFilesContents = async (dir: string) => {
   const highlighter = await createHighlighter({
     langs: ["css"],
-    themes: ["laserwave"],
+    themes: ["laserwave", "slack-ochin"],
   });
   const parseContent = (content: string) => {
     const lines = content.split("\n");
     const result: CssItem[] = [];
+    let shouldContinue = true;
     lines.forEach((line) => {
+      if (!shouldContinue) return;
+      if (!line.trim().startsWith("//") && line.trim() !== "") {
+        shouldContinue = false;
+      }
       const match = line.includes("@example");
       if (match) {
-        const darkExample = highlighter.codeToTokens(
-          line.split("@example")[1].trim(),
-          { lang: "css", theme: "laserwave" }
+        const code = line.split("@example")[1].trim().replaceAll("; ", ";\n");
+
+        const darkExample = highlighter.codeToTokens(`{${code}}`, {
+          lang: "css",
+          theme: "laserwave",
+        });
+        const example = highlighter.codeToTokens(`{${code}}`, {
+          lang: "css",
+          theme: "slack-ochin",
+        });
+        darkExample.tokens[0][0].content =
+          darkExample.tokens[0][0].content.replace("{", "");
+        darkExample.tokens.at(-1)!.at(-1)!.content =
+          darkExample.tokens[0][0].content.replace("}", "");
+        example.tokens[0][0].content = example.tokens[0][0].content.replace(
+          "{",
+          "",
         );
-        const example = highlighter.codeToTokens(
-          line.split("@example")[1].trim(),
-          { lang: "css", theme: "laserwave" }
-        );
-        result.push({ name: "", darkExample, example, group: "" });
+        example.tokens.at(-1)!.at(-1)!.content =
+          example.tokens[0][0].content.replace("}", "");
+        result.push({
+          name: "",
+          darkExample,
+          example,
+          group: "",
+          rawCode: code,
+        });
       } else if (line.includes("@name")) {
         const lastResult = result.at(-1);
         if (!lastResult) return;
@@ -44,7 +67,8 @@ const getAllScssFilesContents = async (dir: string) => {
     const folderPath = path.join(dir, folder.name);
     const files = fs
       .readdirSync(folderPath, { withFileTypes: true })
-      .filter((f) => f.isFile() && !f.name.includes("index"));
+      .filter((f) => f.isFile() && !f.name.includes("index"))
+      .sort((a, b) => a.name.localeCompare(b.name));
 
     files.forEach((file) => {
       const filePath = path.join(folderPath, file.name);
@@ -53,7 +77,9 @@ const getAllScssFilesContents = async (dir: string) => {
       if (!result[folderName]) {
         result[folderName] = {};
       }
-      result[folderName][fileName.replace("_", "")] = parseContent(content);
+      const parsed = parseContent(content);
+      if (!parsed.length) return;
+      result[folderName][fileName.replace("_", "")] = parsed;
     });
   });
 
@@ -62,12 +88,12 @@ const getAllScssFilesContents = async (dir: string) => {
 
 const kendoUtilsDir = path.join(
   process.cwd(),
-  "node_modules/@progress/kendo-theme-utils/scss"
+  "node_modules/@progress/kendo-theme-utils/scss",
 );
 
 const scssFilesContents = await getAllScssFilesContents(kendoUtilsDir);
 fs.writeFileSync(
   path.join(process.cwd(), "public/data.json"),
   JSON.stringify(scssFilesContents, null, 2),
-  "utf8"
+  "utf8",
 );

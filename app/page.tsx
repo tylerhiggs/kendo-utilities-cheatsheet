@@ -1,37 +1,30 @@
-import { Input } from "@/components/ui/input";
 import { getStaticData } from "./getStaticData";
-import { CssPreview } from "@/components/CssPreview";
+import KendoCheatsheet from "@/components/KendoCheatsheet";
 
 export default function Home() {
   const scssFilesContents = getStaticData();
-
+  const items = Object.entries(scssFilesContents)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([groupName, subCategories]) => ({
+      items: Object.entries(subCategories).map(([subCategoryName, items]) => ({
+        title: subCategoryName.replace(".scss", ""),
+        items,
+      })),
+      title: groupName.replace("-", " "),
+    }));
+  const flattenedItems = items.flatMap((item) =>
+    item.items.flatMap((subItem) =>
+      subItem.items.map((cssItem) => ({
+        ...cssItem,
+        group: item.title,
+        subGroup: subItem.title,
+      })),
+    ),
+  );
   return (
     <div className="font-sans">
       <main>
-        <div className="my-2 flex w-full items-center justify-center p-4">
-          <Input placeholder="Search..." />
-        </div>
-        <div className="grid w-full grid-cols-1 gap-4 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {Object.entries(scssFilesContents).map(([folderName, files]) => (
-            <div key={folderName} className="rounded-lg border p-4">
-              <h2 className="mb-2 text-lg font-semibold">{folderName}</h2>
-              {Object.entries(files).map(([fileName, items]) => (
-                <div key={fileName} className="mb-4">
-                  <h3 className="text-md font-medium">{fileName}</h3>
-                  {items.map((item) => (
-                    <div key={item.name} className="mt-2">
-                      <h4 className="text-sm font-semibold">{item.name}</h4>
-                      <CssPreview
-                        lightTokens={item.example}
-                        darkTokens={item.darkExample}
-                      />
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
+        <KendoCheatsheet items={flattenedItems} />
       </main>
     </div>
   );

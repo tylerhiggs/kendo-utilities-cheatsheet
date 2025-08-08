@@ -11,18 +11,19 @@ export const CssPreview: React.FC<CssPreviewProps> = ({
   lightTokens,
   darkTokens,
 }) => {
-  const { theme } = useTheme();
+  const { systemTheme: theme } = useTheme();
+
   const tokens = theme === "dark" ? darkTokens : lightTokens;
   return (
-    <pre>
+    <pre
+      className="m-1 w-full rounded p-2 font-mono text-sm whitespace-pre-wrap"
+      style={{ backgroundColor: tokens?.bg }}
+    >
       <code>
         {tokens?.tokens.map((line, i) => (
           <div key={i}>
             {line.map((token, j) => (
-              <span
-                key={j}
-                style={token.color ? { color: token.color } : undefined}
-              >
+              <span key={j} style={{ color: token.color }}>
                 {token.content}
               </span>
             ))}
