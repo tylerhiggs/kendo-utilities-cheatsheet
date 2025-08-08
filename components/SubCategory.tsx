@@ -37,16 +37,16 @@ export default function SubCategory({
               key={item.name}
               className="flex w-full items-center justify-between"
             >
-              <h4 className="text-muted-foreground group w-1/2 gap-1 text-sm font-semibold">
+              <h4 className="text-muted-foreground group flex w-1/2 gap-1 text-sm font-semibold">
                 <Button
                   variant="ghost"
-                  className="flex w-full items-center justify-between"
+                  className="flex w-full items-center justify-between hyphens-auto"
                   onClick={() => {
                     navigator.clipboard.writeText(item.rawCode);
                     toast.success("Copied to clipboard");
                   }}
                 >
-                  <div className="text-left font-mono text-wrap">
+                  <div className="flex overflow-x-auto text-left font-mono text-wrap">
                     {item.name}
                   </div>
                   <Clipboard className="invisible h-4 w-4 text-gray-500 group-hover:visible" />

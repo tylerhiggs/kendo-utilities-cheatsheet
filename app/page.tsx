@@ -41,7 +41,7 @@ export default function Home() {
         </div>
         <br />
         <a
-          href="https://github.com/tylerhiggs/mortgage-rent-calculator"
+          href="https://github.com/tylerhiggs/kendo-utilities-cheatsheet"
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center gap-1 text-stone-800 transition duration-200 hover:font-bold hover:text-stone-900 hover:underline dark:text-stone-200 dark:hover:text-stone-100"
@@ -49,7 +49,7 @@ export default function Home() {
           <Image
             src="./github-mark.svg"
             alt="GitHub"
-            className="inline h-5 w-5 align-middle"
+            className="inline h-5 w-5 align-middle dark:invert"
             height={20}
             width={20}
           />

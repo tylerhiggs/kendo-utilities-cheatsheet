@@ -160,6 +160,8 @@ export default function KendoCheatsheet({
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            type="search"
+            kbds={["meta", "k"]}
             placeholder="Search..."
             className="w-full sm:w-96"
             spellCheck={false}
@@ -178,7 +180,7 @@ export default function KendoCheatsheet({
                 <Image
                   src="/github-mark.svg"
                   alt="GitHub"
-                  className="h-6 w-6"
+                  className="h-6 w-6 dark:invert"
                   height={24}
                   width={24}
                 />
