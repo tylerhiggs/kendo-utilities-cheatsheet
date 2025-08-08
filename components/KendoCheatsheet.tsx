@@ -141,7 +141,7 @@ export default function KendoCheatsheet({
   return (
     <>
       <div className="my-2 grid w-full grid-cols-1 p-4 sm:grid-cols-3">
-        <div className="flex items-center justify-start">
+        <div className="flex items-center justify-start py-3">
           <h1 className="text-base font-bold">
             <a
               tabIndex={0}
@@ -169,7 +169,7 @@ export default function KendoCheatsheet({
             autoFocus
           />
         </div>
-        <div className="flex items-center justify-end">
+        <div className="invisible flex items-center justify-end sm:visible">
           <Tooltip>
             <TooltipTrigger asChild>
               <a

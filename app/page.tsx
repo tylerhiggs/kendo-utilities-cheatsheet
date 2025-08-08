@@ -2,6 +2,9 @@ import Image from "next/image";
 import { getStaticData } from "./getStaticData";
 import KendoCheatsheet from "@/components/KendoCheatsheet";
 
+// This ensures the page is statically generated
+export const dynamic = "force-static";
+
 export default function Home() {
   const scssFilesContents = getStaticData();
   const items = Object.entries(scssFilesContents)
@@ -13,6 +16,7 @@ export default function Home() {
       })),
       title: groupName.replace("-", " "),
     }));
+
   const flattenedItems = items.flatMap((item) =>
     item.items.flatMap((subItem) =>
       subItem.items.map((cssItem) => ({
@@ -22,6 +26,7 @@ export default function Home() {
       })),
     ),
   );
+
   return (
     <div className="font-sans">
       <main>

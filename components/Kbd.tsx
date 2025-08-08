@@ -32,7 +32,7 @@ function getDisplayKey(keyName: string): string {
 }
 
 export const Kbd: React.FC<KbdProps> = ({ keyName }) => (
-  <kbd className="ring-accented text-default bg-default inline-flex h-5 min-w-[20px] items-center justify-center rounded-sm px-1 font-sans text-[11px] font-medium ring ring-inset">
+  <kbd className="ring-accented text-default bg-default invisible inline-flex h-5 min-w-[20px] items-center justify-center rounded-sm px-1 font-sans text-[11px] font-medium ring ring-inset sm:visible">
     {getDisplayKey(keyName)}
   </kbd>
 );
