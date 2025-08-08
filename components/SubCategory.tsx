@@ -31,7 +31,7 @@ export default function SubCategory({
             <ChevronsUpDown className="h-5 w-5 text-gray-500" />
           </div>
         </CollapsibleTrigger>
-        <CollapsibleContent className="flex flex-col gap-3 p-2">
+        <CollapsibleContent className="flex flex-col gap-3">
           {items.map((item) => (
             <div
               key={item.name}
@@ -40,7 +40,7 @@ export default function SubCategory({
               <h4 className="text-muted-foreground group flex w-1/2 gap-1 text-sm font-semibold">
                 <Button
                   variant="ghost"
-                  className="flex w-full items-center justify-between hyphens-auto"
+                  className="flex h-auto w-full items-center justify-between text-wrap"
                   onClick={() => {
                     navigator.clipboard.writeText(item.rawCode);
                     toast.success("Copied to clipboard");

@@ -31,14 +31,18 @@ const getAllScssFilesContents = async (dir: string) => {
         });
         darkExample.tokens[0][0].content =
           darkExample.tokens[0][0].content.replace("{", "");
-        darkExample.tokens.at(-1)!.at(-1)!.content =
-          darkExample.tokens[0][0].content.replace("}", "");
+        darkExample.tokens.at(-1)!.at(-1)!.content = darkExample.tokens
+          .at(-1)!
+          .at(-1)!
+          .content.replace("}", "");
         example.tokens[0][0].content = example.tokens[0][0].content.replace(
           "{",
           "",
         );
-        example.tokens.at(-1)!.at(-1)!.content =
-          example.tokens[0][0].content.replace("}", "");
+        example.tokens.at(-1)!.at(-1)!.content = example.tokens
+          .at(-1)!
+          .at(-1)!
+          .content.replace("}", "");
         result.push({
           name: "",
           darkExample,
@@ -49,7 +53,7 @@ const getAllScssFilesContents = async (dir: string) => {
       } else if (line.includes("@name")) {
         const lastResult = result.at(-1);
         if (!lastResult) return;
-        lastResult.name = line.split("@name")[1].trim();
+        lastResult.name = line.split("@name")[1].trim().slice(1);
       } else if (line.includes("@group")) {
         const lastResult = result.at(-1);
         if (!lastResult) return;
@@ -62,7 +66,7 @@ const getAllScssFilesContents = async (dir: string) => {
   const folders = fs
     .readdirSync(dir, { withFileTypes: true })
     .filter((d) => d.isDirectory());
-
+  const used = new Set<string>();
   folders.forEach((folder) => {
     const folderPath = path.join(dir, folder.name);
     const files = fs
@@ -79,7 +83,11 @@ const getAllScssFilesContents = async (dir: string) => {
       }
       const parsed = parseContent(content);
       if (!parsed.length) return;
-      result[folderName][fileName.replace("_", "")] = parsed;
+      result[folderName][fileName.replace("_", "")] = parsed.filter((item) => {
+        if (used.has(item.name)) return false;
+        used.add(item.name);
+        return true;
+      });
     });
   });
 
