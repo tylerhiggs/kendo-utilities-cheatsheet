@@ -157,7 +157,11 @@ export default function KendoCheatsheet({
         </div>
         <div className="flex items-center justify-center gap-3">
           <Badge className="text-sm">11.2.0</Badge>
+          <label htmlFor="search-input" className="sr-only">
+            Search utilities
+          </label>
           <Input
+            id="search-input"
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
