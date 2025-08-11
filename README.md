@@ -40,6 +40,8 @@ Shadcn is a UI component library that provides a set of high-quality, customizab
 
 Next.js is a React framework that enables developers to build server-rendered React applications with ease. It provides features like static site generation, server-side rendering, and API routes, making it a powerful tool for building modern web applications.
 
+This project uses SSG (Static Site Generation) to pre-render the pages at build time, which improves performance and SEO. The data for the Kendo CSS utilities is fetched from a JSON file located in the `public` directory.
+
 To learn more about Next.js, take a look at the following resources:
 
 - [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
